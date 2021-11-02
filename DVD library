@@ -1,0 +1,23 @@
+package com.m3ml.dvdlibrary;
+
+import com.m3ml.dvdlibrary.controller.DVDcontroller;
+import com.m3ml.dvdlibrary.dao.DVDDao;
+import com.m3ml.dvdlibrary.dao.DVDDaoFile;
+import com.m3ml.dvdlibrary.ui.UserIO;
+import com.m3ml.dvdlibrary.ui.UserIOConsoleImpl;
+import com.m3ml.dvdlibrary.ui.View;
+
+/**
+ *
+ * @author May
+ */
+public class app {
+    public static void main(String[] args) {
+   UserIO myIo = new UserIOConsoleImpl();
+    View myView = new View(myIo);
+    DVDDao myDao = new DVDDaoFile();
+    DVDcontroller controller =
+            new DVDcontroller(myDao, myView);
+            controller.run();
+}
+}
