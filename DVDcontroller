@@ -1,0 +1,101 @@
+package com.m3ml.dvdlibrary.controller;
+
+import com.m3ml.dvdlibrary.dao.DVDDao;
+import com.m3ml.dvdlibrary.dao.DVDDaoException;
+import com.m3ml.dvdlibrary.dao.DVDDaoFile;
+import com.m3ml.dvdlibrary.dto.DVD;
+import com.m3ml.dvdlibrary.ui.UserIO;
+import com.m3ml.dvdlibrary.ui.UserIOConsoleImpl;
+import com.m3ml.dvdlibrary.ui.View;
+import java.util.List;
+
+/**
+ *
+ * @author quang
+ */
+public class DVDcontroller {
+    private DVDDao dao;
+    private View view;
+    public DVDcontroller(DVDDao dao, View view){
+        this.dao = dao;
+        this.view = view;
+    }  
+   private int getMenuSelection() {
+       return view.printMenuAndGetSelection();
+   }
+      private void createDVD() throws DVDDaoException {
+        view.displayCreateDVDRemove();
+        DVD newDVD = view.getnewDVDInfo();
+        dao.addDVD(newDVD.getTile(), newDVD);
+        view.displayCreateSuccessRemove();
+    }
+
+     private void listDVD() throws DVDDaoException{
+         view.displayDisplayAllRemove();
+         List<DVD> dvdList = dao.getAllDVD();
+         view.displayDVDList(dvdList);
+     }
+    private void viewDVD() throws DVDDaoException{
+         view.displayDisplayDVDremove();
+         String tile = view.getTileChoice();
+         DVD dvd = dao.getDVD(tile);
+         view.displayDVD(dvd);
+     }
+    private void removeDVD()throws DVDDaoException{
+        view.displayRemoveDVDRemove();
+        String tile = view.getTileChoice();
+        DVD removedDVD = dao.removeDVD(tile);
+        view.displayRemoveResult(removedDVD);
+    }
+    private void unknownCommand() {
+    view.displayUnknownCommandRemove();
+}
+
+private void exitMessage() {
+    view.displayExitRemove();
+}
+  private void editDVD() throws DVDDaoException {
+        view.displayEditDVDBanner();
+        String title = view.getTileChoice();
+        DVD previousDVD = dao.getDVD(title);
+        DVD editedDVD = view.editDVD(previousDVD);
+        dao.editDVD(editedDVD.getTile(), editedDVD);
+        view.displayEditSuccessBanner();
+    }
+public void run() {
+       boolean keepGoing = true;
+       int menuSelection = 0;
+       try {
+    while (keepGoing) {
+            menuSelection = getMenuSelection();
+          
+              switch (menuSelection) {
+                case 1:
+                    listDVD();
+                    break;
+                case 2:
+                   createDVD();
+                    break;
+                case 3:
+                    removeDVD();
+                    break;
+                case 4:
+                    editDVD();
+                    break;
+                case 5:
+                    viewDVD();
+                    break;
+                case 6:
+                    keepGoing = false;
+                    break;
+                default:
+                    unknownCommand();
+            }
+
+        }
+        exitMessage();
+    } catch (DVDDaoException e) {
+        view.displayErrorMessage(e.getMessage());
+    }
+        }  
+}
