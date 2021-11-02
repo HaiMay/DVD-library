@@ -1,0 +1,155 @@
+package com.m3ml.dvdlibrary.ui;
+
+import com.m3ml.dvdlibrary.dto.DVD;
+import java.util.List;
+
+/**
+ *
+ * @author quang
+ */
+public class View {
+
+    private UserIO io;
+
+    public View(UserIO io) {
+        this.io = io;
+    }
+
+    public int printMenuAndGetSelection() {
+        io.print("Main Menu");
+        io.print("1. List DVD");
+        io.print("2. ADD a DVD");
+        io.print("3. Remove a DVD");
+        io.print("4. EDIT DVD's information");
+        io.print("5. VIEW the DVD by Title");
+        return io.readInt("Please select from the above choices.", 1, 5);
+    }
+
+    public DVD getnewDVDInfo() {
+        String tile = io.readString("Please enter the Tile");
+        String releaseDate = io.readString("Please enter releaseDate");
+        String directorsName = io.readString("Please enter Director's name");
+
+        String studio = io.readString("Please enter Studio");
+        String mPAARating = io.readString("Please enter MPAA rating");
+        String userRatingOrNote = io.readString("Please enter User rating  1 - 5 stars");
+        DVD curentDVD = new DVD(tile);
+
+        curentDVD.setReleaseDate(releaseDate);
+        curentDVD.setMPAARating(mPAARating);
+        curentDVD.setDirectorName(directorsName);
+        curentDVD.setStudio(studio);
+        curentDVD.setUserRating(userRatingOrNote);
+        return curentDVD;
+
+    }
+
+    public void displayCreateDVDRemove() {
+        io.print("=== Create DVD List ===");
+    }
+
+    public void displayCreateSuccessRemove() {
+        io.readString(
+                "This DVD successfully created.  Please hit enter to continue");
+    }
+
+    public void displayDVDList(List<DVD> dvdList) {
+        for (DVD currentDVD : dvdList) {
+            String dvdInfo = String.format("%s : %s %s %s %s %s",
+                    currentDVD.getTile(),
+                    currentDVD.getReleaseDate(),
+                    currentDVD.getMPAARating(),
+                    currentDVD.getDirectorName(),
+                    currentDVD.getStudio(),
+                    currentDVD.getUserRating());
+            io.print(dvdInfo);
+        }
+        io.readString("Please hit enter to continue.");
+    }
+
+    public void displayDisplayAllRemove() {
+        io.print("=== Display All DVDs ===");
+    }
+
+    public void displayDisplayDVDremove() {
+        io.print("===Display DVD ===");
+    }
+
+    public String getTileChoice() {
+        return io.readString("Please enter the Tile.");
+    }
+
+    public void displayDVD(DVD dvd) {
+        if (dvd != null) {
+            io.print(dvd.getTile());
+            io.print(dvd.getReleaseDate());
+            io.print(dvd.getStudio() + " " + dvd.getDirectorName());
+            io.print(dvd.getMPAARating());
+            io.print(dvd.getUserRating());
+
+            io.print("");
+        } else {
+            io.print("No such DVD.");
+        }
+        io.readString("Please hit enter to continue.");
+    }
+
+    public void displayDisplayDVD() {
+        io.print("=== Display DVD ===");
+    }
+
+    public void displayRemoveDVDRemove() {
+        io.print("===remove DVD===");
+    }
+
+    public void displayRemoveResult(DVD dvdRecord) {
+        if (dvdRecord != null) {
+            io.print("DVD successfully removed.");
+        } else {
+            io.print("no such dvd.");
+        }
+        io.readString("Please hit enter to continue.");
+    }
+
+    public void displayExitRemove() {
+        io.print("Good Bye!!!");
+    }
+
+    public void displayUnknownCommandRemove() {
+        io.print("Unknow Command!!");
+
+    }
+
+    public void displayErrorMessage(String errorMsg) {
+        io.print("===ERROR===");
+        io.print(errorMsg);
+    }
+
+    public DVD editDVD(DVD edvd) {
+        String ReleaseDate = io.readString("Please enter the Release Date");
+        String studio = io.readString("Please enter the Studio");
+        String directorName = io.readString("Please enter the Directors name");
+        String userRating = io.readString("Please enter a rating 1 - 5 stars");
+        String mpaaRating = io.readString("Please enter the MPAA Rating");
+
+        edvd.setReleaseDate(ReleaseDate);
+
+        edvd.setStudio(studio);
+        edvd.setDirectorName(directorName);
+        edvd.setUserRating(userRating);
+        edvd.setMPAARating(mpaaRating);
+        return edvd;
+    }
+
+    public void displayExitBanner() {
+        io.print("Good Bye!!!");
+    }
+
+    public void displayEditDVDBanner() {
+        io.print("=== Edit DVD ===");
+    }
+
+    public void displayEditSuccessBanner() {
+        io.readString("DVD successfully Edited. Please hit enter to continue.");
+    }
+}
