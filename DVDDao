@@ -1,0 +1,22 @@
+package com.m3ml.dvdlibrary.dao;
+
+import com.m3ml.dvdlibrary.dto.DVD;
+import java.util.List;
+
+/**
+ *
+ * @author May
+ */
+public interface DVDDao {
+
+    DVD addDVD(String tile, DVD dvd) throws DVDDaoException;
+    
+
+    List<DVD> getAllDVD() throws DVDDaoException;
+
+    DVD getDVD(String tile) throws DVDDaoException;
+
+    DVD removeDVD(String tile) throws DVDDaoException;
+    DVD editDVD(String tile, DVD dvd) throws DVDDaoException;
+    
+}
