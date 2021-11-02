@@ -1,0 +1,119 @@
+package com.m3ml.dvdlibrary.dao;
+
+import com.m3ml.dvdlibrary.dto.DVD;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+/**
+ *
+ * @author may
+ */
+public class DVDDaoFile implements DVDDao {
+
+    private final Map<String, DVD> dvds = new HashMap<>();
+
+    private DVD unmarshallDVD(String dvdAsText) {
+        String[] dvdTokens = dvdAsText.split(DELIMITER);
+        String tile = dvdTokens[0];
+        DVD dvdFromFIle = new DVD(tile);
+        dvdFromFIle.setReleaseDate(dvdTokens[1]);
+        dvdFromFIle.setMPAARating(dvdTokens[2]);
+        dvdFromFIle.setDirectorName(dvdTokens[3]);
+        dvdFromFIle.setStudio(dvdTokens[4]);
+        dvdFromFIle.setUserRating(dvdTokens[5]);
+        return dvdFromFIle;
+    }
+
+    private void loadDVD() throws DVDDaoException {
+        Scanner scanner;
+        try {
+            scanner = new Scanner(new BufferedReader(new FileReader(DVD_FILE)));
+        } catch (FileNotFoundException e) {
+            throw new DVDDaoException("-_- Could not load DVD data into memory.", e);
+        }
+        String currentLine;
+        DVD currentDVD;
+        while (scanner.hasNextLine()) {
+            currentLine = scanner.nextLine();
+
+            currentDVD = unmarshallDVD(currentLine);
+            dvds.put(currentDVD.getTile(), currentDVD);
+        }
+        scanner.close();
+    }
+
+    private String marshallDVD(DVD aDVD) {
+        String dvdAsText = aDVD.getTile() + DELIMITER;
+        dvdAsText += aDVD.getReleaseDate() + DELIMITER;
+        dvdAsText += aDVD.getDirectorName() + DELIMITER;
+        dvdAsText += aDVD.getStudio() + DELIMITER;
+        dvdAsText += aDVD.getMPAARating() + DELIMITER;
+        dvdAsText += aDVD.getUserRating() + DELIMITER;
+        return dvdAsText;
+    }
+
+    private void writeDVD() throws DVDDaoException {
+        PrintWriter out;
+        try {
+            out = new PrintWriter(new FileWriter(DVD_FILE));
+        } catch (IOException e) {
+            throw new DVDDaoException("Could not save DVD data.", e);
+        }
+        String dvdAsText;
+        List dvdList = this.getAllDVD();
+        for (Object currentDVD : dvdList) {
+            dvdAsText = marshallDVD((DVD) currentDVD);
+            out.println(dvdAsText);
+            out.flush();
+        }
+        out.close();
+
+    }
+
+    @Override
+    public DVD addDVD(String tile, DVD dvd) throws DVDDaoException {
+        loadDVD();
+        DVD newDVD = dvds.put(tile, dvd);
+        writeDVD();
+        return newDVD;
+
+    }
+
+    @Override
+    public List<DVD> getAllDVD() throws DVDDaoException {
+        loadDVD();
+        return new ArrayList<DVD>(dvds.values());
+    }
+
+    @Override
+    public DVD getDVD(String tile) throws DVDDaoException {
+        loadDVD();
+        return dvds.get(tile);
+    }
+
+    @Override
+    public DVD removeDVD(String tile) throws DVDDaoException {
+        loadDVD();
+        DVD removedDVD = dvds.remove(tile);
+        writeDVD();
+        return removedDVD;
+    }
+
+    @Override
+    public DVD editDVD(String tile, DVD dvd) throws DVDDaoException {
+        dvds.put(tile, dvd);
+        return dvd;
+    }
+    public static final String DVD_FILE = "DVD.txt";
+    public static final String DELIMITER = "::";
+
+}
